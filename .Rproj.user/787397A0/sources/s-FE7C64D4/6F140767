@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1578231094228.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1657584060",
+    "id" : "6F140767",
+    "lastKnownWriteTime" : 1435836507,
+    "last_content_update" : 1435836507,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/peakIdent.R",
+    "project_path" : "R/peakIdent.R",
+    "properties" : {
+        "cursorPosition" : "27,21",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 12,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

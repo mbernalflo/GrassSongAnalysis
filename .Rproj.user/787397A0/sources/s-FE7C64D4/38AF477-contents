@@ -1,0 +1,151 @@
+#' Function for curating automatically detected syllable cutoffs.
+#' 
+#' The function takes existing cutoffs (typically read from a textfile), plots 
+#' the amplitude envelpe and allows interactive setting of additional as well 
+#' as removal of cutoffs. The function will end with redrawing the .bmp file 
+#' with the new cutoffs.
+#'
+#' @param envFine Sound envelope (typically at finest resolution, required).
+#' @param wavfile Name of wavfile (required).
+#' @param syllpath Path of the syllable files (optional, working directory if 
+#'   missing).
+#' @param f Sampling rate of .wav file. Requrired for conversion of sampling 
+#'   units to seconds.
+#' @param wl Window width used when calculating the sound evolope. Requrired 
+#'   for conversion of sampling units to seconds.
+#' @param ovlp Overlap of the windows (expressed as percentages, i.e. >=0 
+#'   and <100) used when calculating the sound evolope. Requrired for 
+#'   conversion of sampling units to seconds.
+#' @param minSyllDur Minimum duration for strophes to be considered valid.
+#' @param minSearchWindow Window size (in sampling units) used for scanning 
+#'   for a local minimum near the new location.
+#' @param stroCutoffs (Optional) \code{data.frame} with strophe cutoffs.
+#' @param syllCutoffs (Optional) \code{data.frame} with sullable cutoffs.
+#' @param ... Addional parameters handed over to 
+#'   \code{\link{identifySyllables}} for plotting.
+#' 
+#' @return 
+#' Returns a \code{data.frame} of syllable cutoffs 
+#' (\code{\link{identifySyllables}} for details).
+#' 
+#' @author Holger Schielzeth  (holger.schielzeth@@uni-bielefeld.de)
+#' 
+#' @seealso 
+#' \code{\link{loadSongfile}}, \code{\link{identifyStrophes}}, 
+#' \code{\link{identifySyllables}}, \code{\link{measureSyllables}}, 
+#' \code{\link{identifyPulses}}, \code{\link{curateStrophes}}
+#' 
+#' @examples   
+#' \dontrun{
+#' # No example yet.
+#' }
+#' 
+#' @export
+
+curateSyllables = function(envFine, wavfile, syllpath, f=44100, wl=44, ovlp=50, minSyllDur=0, 
+                           minSearchWindow = 31,
+                           stroCutoffs=NULL, syllCutoffs=NULL, ...) {
+  curCutoffs = sort(c(syllCutoffs$SyllBegSamp, syllCutoffs$SyllEndSamp[nrow(syllCutoffs)]))
+  zoom = NULL
+  identifySyllables(envFine, wavfile=wavfile, syllpath=syllpath, identify=FALSE, plot=TRUE, toFile=FALSE, 
+                    f=f, wl=wl, ovlp=ovlp, minSyllDur=minSyllDur, mar=c(2,3,1,1), cex=1,
+                    stroCutoffs=stroCutoffs, syllCutoffs=syllCutoffs, 
+                    xlimSyllPlot=zoom, xlimFullPlot=zoom, writeRes=FALSE, ...)      
+  repeat{
+    print("Do you want to zoom in [Z], zoom out [O], add cutoff points [A], remove cutoff points [R] or quit [Q]?")
+    print("Waiting for input ...")
+    answer = readline()
+    print("Input received.")
+    if(answer=="O") {
+      print("Zoom out selected.")
+      identifySyllables(envFine, wavfile=wavfile, syllpath=syllpath, identify=FALSE, plot=TRUE, toFile=FALSE, 
+                        f=f, wl=wl, ovlp=ovlp, minSyllDur=minSyllDur, mar=c(2,3,1,1), cex=1,
+                        stroCutoffs=stroCutoffs, syllCutoffs=syllCutoffs, 
+                        xlimSyllPlot=NULL, xlimFullPlot=NULL, writeRes=FALSE, ...)
+      zoom = c(0, length(envFine))
+    }
+    if(answer=="Z") {
+      print("Zoom in selected.")
+      print("Mark two points in plot (last two will be used)")
+      print("Waiting for input ...")
+      zoom = locator()$x
+      print("Input received.")
+      if(length(zoom)<2) warning("Two points have to be marked.")     
+      if(length(zoom)>2) zoom = zoom[c(length(zoom)-1,length(zoom))]
+      identifySyllables(envFine, wavfile=wavfile, syllpath=syllpath, identify=FALSE, plot=TRUE, toFile=FALSE, 
+                        f=f, wl=wl, ovlp=ovlp, minSyllDur=minSyllDur, mar=c(2,3,1,1), cex=1,
+                        stroCutoffs=stroCutoffs, syllCutoffs=syllCutoffs, 
+                        xlimSyllPlot=zoom, xlimFullPlot=zoom, writeRes=FALSE, ...) 
+    }
+    if(answer=="A") {
+      print("Adding cutoffs selected")
+      print("Mark new cutoff points in plot")
+      print("Waiting for input ...")
+      newcutoff = round(locator()$x,0)
+      print("Input received.")
+      newcutoffmin = newcutoff
+      seachWindowOneSide = (minSearchWindow-1)/2
+      for(i in 1:length(newcutoffmin)) {
+        print(newcutoffmin[i]+seachWindowOneSide*c(-1,1))
+        wind = envFine[newcutoffmin[i]+seachWindowOneSide*c(-1,1)]
+        newcutoffmin[i] = newcutoffmin[i]+which(wind==min(wind))[1]-seachWindowOneSide
+      }
+      newcutoff = data.frame(selected=newcutoff, localMin=newcutoffmin)
+      print(newcutoff)
+      curCutoffs = sort(c(curCutoffs, newcutoff$localMin))
+      syllCutoffs = curCutoffs
+      syllCutoffs = data.frame(SongFile=wavfile, StroCounter = stroCutoffs$StroCounter[1], StroWindOffSamp=stroCutoffs$StartSampWoutPad[1], SyllCounter=1:I(length(syllCutoffs)-1),  SyllCounterRev=rev(1:I(length(syllCutoffs)-1)), SyllPosProp=1:I(length(syllCutoffs)-1)/length(syllCutoffs), SyllBegSamp=syllCutoffs[-length(syllCutoffs)], SyllEndSamp=syllCutoffs[-1])
+      syllCutoffs$SyllDurationSamp = syllCutoffs$SyllEndSamp-syllCutoffs$SyllBegSamp
+      syllCutoffs$SyllDurationSec  = syllCutoffs$SyllDurationSamp / ( f / (wl*(1-ovlp/100)))    
+      syllCutoffs$SyllValid = as.numeric(syllCutoffs$SyllDurationSec >= minSyllDur)    
+      write.table(syllCutoffs, paste0(syllpath,unlist(strsplit(wavfile, split='.', fixed=TRUE))[1],"_Strophe", stroCutoffs$StroCounter[i], "_Syllables.txt"), sep=",", quote=FALSE, row.names=FALSE)
+      identifySyllables(envFine, wavfile=wavfile, syllpath=syllpath, identify=FALSE, plot=TRUE, toFile=FALSE, 
+                        f=f, wl=wl, ovlp=ovlp, minSyllDur=minSyllDur, mar=c(2,3,1,1), cex=1,
+                        stroCutoffs=stroCutoffs, syllCutoffs=syllCutoffs, 
+                        xlimSyllPlot=zoom, xlimFullPlot=zoom, writeRes=FALSE, ...)   
+    }
+    if(answer=="R") {
+      print("Remove cutoffs selected")
+      points(curCutoffs, rep(100, length(curCutoffs)), col="red", pch=19, cex=1.5)
+      print("Mark cutoff points to be deleted in plot (click on red dots)")
+      print("Waiting for input ...")
+      remcutoff = identify(curCutoffs, rep(100, length(curCutoffs)))
+      print("Input received.")
+      print(remcutoff)
+      if(any(remcutoff)==1) {
+        if(any(remcutoff)!=1) {
+          remcutoff = remcutoff[-1*which(remcutoff==1)]
+          print("First and last cutoff points cannot be deleted.")
+        }
+      }
+      if(any(remcutoff)==1) {
+        if(any(remcutoff)!=1) {
+          remcutoff = remcutoff[-1*which(remcutoff==1)]
+          print("First and last cutoff points cannot be deleted.")
+        }
+      }
+      curCutoffs = curCutoffs[-remcutoff]
+      syllCutoffs = curCutoffs
+      syllCutoffs = data.frame(SongFile=wavfile, StroCounter = stroCutoffs$StroCounter[1], StroWindOffSamp=stroCutoffs$StartSampWoutPad[1], SyllCounter=1:I(length(syllCutoffs)-1),  SyllCounterRev=rev(1:I(length(syllCutoffs)-1)), SyllPosProp=1:I(length(syllCutoffs)-1)/length(syllCutoffs), SyllBegSamp=syllCutoffs[-length(syllCutoffs)], SyllEndSamp=syllCutoffs[-1])
+      syllCutoffs$SyllDurationSamp = syllCutoffs$SyllEndSamp-syllCutoffs$SyllBegSamp
+      syllCutoffs$SyllDurationSec  = syllCutoffs$SyllDurationSamp / ( f / (wl*(1-ovlp/100)))    
+      syllCutoffs$SyllValid = as.numeric(syllCutoffs$SyllDurationSec >= minSyllDur)    
+      write.table(syllCutoffs, paste0(syllpath,unlist(strsplit(wavfile, split='.', fixed=TRUE))[1],"_Strophe", stroCutoffs$StroCounter[i], "_Syllables.txt"), sep=",", quote=FALSE, row.names=FALSE)
+      identifySyllables(envFine, wavfile=wavfile, syllpath=syllpath, identify=FALSE, plot=TRUE, toFile=FALSE, 
+                        f=f, wl=wl, ovlp=ovlp, minSyllDur=minSyllDur, mar=c(2,3,1,1), cex=1,
+                        stroCutoffs=stroCutoffs, syllCutoffs=syllCutoffs, 
+                        xlimSyllPlot=zoom, xlimFullPlot=zoom, writeRes=FALSE, ...)   
+    }
+    if(answer=="Q") {
+      print("Quit selected")
+      break 
+    }
+  }
+  # Print to bmp file
+  identifySyllables(envFine, wavfile=wavfile, syllpath=syllpath, identify=FALSE, plot=TRUE, toFile=TRUE, 
+                    f=f, wl=wl, ovlp=ovlp, minSyllDur=minSyllDur, mar=c(2,3,1,1), cex=1,
+                    stroCutoffs=stroCutoffs, syllCutoffs=syllCutoffs, 
+                    xlimSyllPlot=NULL, xlimFullPlot=NULL, writeRes=FALSE, ...)
+  # Return
+  return(syllCutoffs=syllCutoffs)
+}

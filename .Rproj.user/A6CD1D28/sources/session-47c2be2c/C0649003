@@ -1,0 +1,26 @@
+{
+    "id": "C0649003",
+    "path": "~/A_Projects/sibiricus/SongAnalysis/GrassSongAnalysis/R/loadSongfile.R",
+    "project_path": "R/loadSongfile.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": true,
+    "created": 1729603373303.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "28,32",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1435791034,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1729605691679,
+    "read_only": false,
+    "read_only_alternatives": []
+}

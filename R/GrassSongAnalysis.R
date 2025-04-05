@@ -1,0 +1,20 @@
+#' Plot and analyze grasshopper song spectrum.
+#' 
+#' Plots and analyzes grasshopper songs at three temporal resolutions. 
+#' Automated identification of strophe, syllable and pulse cutoff points and 
+#' temporal measurements within each of those sections.
+#'
+#' @section GrassSongAnalysis functions:
+#' The general workflow is \code{\link{loadSongfile}}, 
+#' \code{\link{identifyStrophes}}, \code{\link{curateStrophes}},
+#' \code{\link{identifySyllables}}, \code{\link{curateSyllables}},
+#' \code{\link{measureSyllables}}, \code{\link{plotSpectro}}.
+#'
+#' @author Holger Schielzeth  (holger.schielzeth@@uni-bielefeld.de).
+#' 
+#' @keywords internal
+'_PACKAGE'
+
+#' @name GrassSongAnalysis
+#' @title GrassSongAnalysis: An R Package for Analyzing Grasshopper Song Data
+NULL

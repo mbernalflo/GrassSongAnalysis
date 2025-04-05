@@ -1,0 +1,85 @@
+#' Extract measurements for syllables or pulses.
+#' 
+#' Exacts the start, end, max, min and mean applitute for each syllable/puls.
+#'
+#' @param song A loaded .wav file for extracting the dominant frequency (see 
+#'   \code{\link{loadSongfile}}). 
+#' @param envFine A sound envelope as a vector of numbers.
+#' @param Cutoffs A \code{data.frame} containing the strophe cutoff locations 
+#'   as returned by \code{\link{identifyStrophes}}.
+#' @param type A character strong with two possible values. Used to determine 
+#'   if \code{Cutoffs} refers to syllable or puls cutoffs.
+#' @param AbsThresh Absolute silence threshold
+#' @param RelThresh Relative silence threshold (as fraction of maximum).
+#' @param f The sampling frequency.
+#' @param wlFine The window size for the (finest) sound evelope.
+#' @param ovlpFine The overalp window size for the (finest) sound evelope as 
+#'   percentage (i.e, >=0 amd <100).
+#' @param wlFreq Window size for extracting the dominant frequncy.
+#' @param ovlpFreq The overlap in window size for extracting the dominant 
+#'   frequency.
+#' @param minAmpFreq Minimum amplitute in window for scoring the dominant 
+#'   frequency.
+#' 
+#' @return 
+#' Returns a \code{data.frame}, which is \code{Cutoffs} augmented with five 
+#' columns of measurements.
+#' 
+#' @author Holger Schielzeth  (holger.schielzeth@@uni-bielefeld.de).
+#' 
+#' @seealso 
+#' \code{\link{loadSongfile}}, \code{\link{curateStrophes}}, 
+#' \code{\link{identifyStrophes}}, \code{\link{identifySyllables}}, 
+#' \code{\link{measureSyllables}}, \code{\link{identifyPulses}}, 
+#' \code{\link{curateSyllables}}.
+#' 
+#' @examples   
+#'
+#' \dontrun{
+#' 
+#' mysound = filePreparation("myfile.wav", "C://mypath//", highpassfilter=1001, select=c(0.5,2))
+#' myenv = plotEnvolopes(mysound, "myfile.wav", "c://mystropath//", padding = 300)
+#' mystro = plotStrophes(myenv$envFine, "myfile.wav", "C://mypath//", measure=TRUE)
+#' }
+#' 
+#' @export
+
+measureAnything <- function(song, envFine, Cutoffs, type=c("Syll", "Puls"), f=44100, wlFine=44, ovlpFine=50, wlFreq=441, ovlpFreq=75, minAmpFreq=0.3, AbsThresh=16, RelThresh=0.2) {  
+  ncolumns = ncol(Cutoffs)
+  res = cbind(Cutoffs, begAmp=NA, endAmp=NA, minAmp=NA, maxAmp=NA, avgAmp=NA, locMaxSamp=NA, 
+              SilenceBeginProp=NA, SilenceEndProp=NA, SilenceTotalProp=NA,
+              SilenceBeginSec=NA, SilenceEndSec=NA, SilenceTotalSec=NA,
+              syllPauseRatio=NA)
+  domfreq = seewave::dfreq(song, f = f, wl = wlFreq, ovlp = ovlpFreq, 
+                           clip = minAmpFreq, plot = FALSE, col = "red", pch = 19, 
+                           cex = 1.5)
+  domfreq = domfreq[, 2]
+  env2freqConversionFactor =  ( f / (wlFreq*(1-ovlpFreq/100))) / ( f / (wlFine*(1-ovlpFine/100)))
+  for(j in 1:nrow(Cutoffs)) {
+    if(type=="Syll") {
+      beg = Cutoffs$StroWindOffSamp[j] + Cutoffs$SyllBegSamp[j]
+      end = Cutoffs$StroWindOffSamp[j] + Cutoffs$SyllEndSamp[j]
+    }
+    if(type=="Puls") {
+      beg = Cutoffs$StroWindOffSamp[j] + Cutoffs$PulsBegSamp[j]
+      end = Cutoffs$StroWindOffSamp[j] + Cutoffs$PulsEndSamp[j]
+    }
+    envWindow = envFine[beg:end]
+    res[j,ncolumns+1:6] = c(envFine[beg], envFine[end], min(envWindow), max(envWindow), mean(envWindow), round(mean(beg - 1 + which(envWindow==max(envWindow))),0))
+    silenceSamp = as.numeric(envWindow > AbsThresh & envWindow > max(AbsThresh)*RelThresh)
+    res$SilenceBeginProp[j] = mean(cumsum(silenceSamp)==0)
+    res$SilenceEndProp[j]   = mean(cumsum(rev(silenceSamp))==0)
+    res$SilenceTotalProp[j] = mean(silenceSamp==0)
+    res$SilenceBeginSec[j]  = sum(cumsum(silenceSamp)==0) / ( f / (wlFine*(1-ovlpFine/100)))
+    res$SilenceEndSec[j]    = sum(cumsum(rev(silenceSamp))==0) / ( f / (wlFine*(1-ovlpFine/100)))
+    res$SilenceTotalSec[j]  = sum(silenceSamp==0) / ( f / (wlFine*(1-ovlpFine/100)))
+    res$syllPauseRatio[j]   = (length(silenceSamp) - sum(cumsum(rev(silenceSamp))==0)) / sum(cumsum(rev(silenceSamp))==0)
+    res$DomFreq [j]         = mean(domfreq[unique(round(beg:end*env2freqConversionFactor,0))], na.rm=TRUE)
+  }  
+  res$onsetAccentuation = res$maxAmp - res$begAmp 
+  res$offsetLevel = res$avgAmp - res$endAmp 
+  
+  
+  # Return values
+	return(res)	
+}

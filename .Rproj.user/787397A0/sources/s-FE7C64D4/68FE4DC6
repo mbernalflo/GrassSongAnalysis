@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1500914072853.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4246516766",
+    "id" : "68FE4DC6",
+    "lastKnownWriteTime" : 1506531569,
+    "last_content_update" : 1506531569938,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/measureSyllables.R",
+    "project_path" : "R/measureSyllables.R",
+    "properties" : {
+        "cursorPosition" : "54,12",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

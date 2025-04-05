@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1500914082745.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3331583466",
+    "id" : "98CDF238",
+    "lastKnownWriteTime" : 1500914108,
+    "last_content_update" : 1500914108179,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/measureAnything.R",
+    "project_path" : "R/measureAnything.R",
+    "properties" : {
+        "cursorPosition" : "74,46",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 11,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

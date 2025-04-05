@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#' Recalculated stroph durations and other NAs from cutoffs.\n#' \n#' Takes the cutoff points and recalcuateds begin, end and duration in seconds. Also \n#' re-numbers strophs.\n#'\n#' @param stroCutoffs A \\code{data.frame} containing the strophe cutoff locations \n#'   as returned by \\code{\\link{identifyStrophes}}.\n#' @param f Sampling rate (extracted from wavfile if NULL).\n#' @param wl Window length for the (finest) sound envelope given as the \n#'   number of sample points, At f=44100: 44 eq 1 ms (recommended), 441 eq 10 \n#'   ms, 4410 eq 100 ms.\n#' @param ovlp overlap between two successive windows (in percent, i.e., 0.\n#' @param padding Boolean or number. If FALSE or 0, no padding will be applied. \n#'   If a number >0, padding at the beginning and end will be applied with \n#'   padding interpreted as the number of samples. If TRUE, padding at the \n#'   beginning and end will be applied with the number of samples determined \n#'   by the \\code{StroThreshExceedWW - StroThreshNeeded + 1} (recommended).\n#' @param file Name of file, to which results should be written. No file is written\n#'   if \\code{file = NA} (the default).\n#' \n#' @return \n#' Returns a \\code{data.frame}, which is \\code{Cutoffs} in which NAs are updated.\n#' \n#' @author Holger Schielzeth  (holger.schielzeth@@uni-bielefeld.de).\n#' \n#' @seealso \n#' \\code{\\link{loadSongfile}}, \\code{\\link{curateStrophes}}, \\code{\\link{identifyStrophes}}.\n#' \n#' @examples   \n#' \n#' @export\n\n\n# Helper function to recalculate NAs in Cutoffs file\nrecalcCutoffNAs = function(stroCutoffs, f, wl, ovlp, padding, file=NA) {\n  stroCutoffs$StroCounter      = 1:nrow(stroCutoffs)\n  stroCutoffs$StartSampWoutPad = stroCutoffs$StartSampWithPad - padding\n  stroCutoffs$EndSampWoutPad   = stroCutoffs$EndSampWithPad - padding\n  stroCutoffs$StartSec         = stroCutoffs$StartSampWoutPad/(f/(wl*(1-ovlp/100)))\n  stroCutoffs$EndSec           = stroCutoffs$EndSampWoutPad/(f/(wl*(1-ovlp/100)))\n  stroCutoffs$DurSec           = stroCutoffs$EndSec - stroCutoffs$StartSec\n  #stroCutoffs$StroValid        = as.numeric(stroCutoffs$DurSec > MinStroDur)\n  if(!is.na(file)) write.table(stroCutoffs, file=file, sep=\"\\t\", quote=FALSE, row.names=FALSE)\n  return(stroCutoffs)\n}\n",
+    "created" : 1498752393774.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "73963418",
+    "id" : "B9B60EC4",
+    "lastKnownWriteTime" : 1497087174,
+    "last_content_update" : 1497087174,
+    "path" : "~/A_Projects/Gomphocerus/SongAnalysis/GrassSongAnalysis/R/recalcCutoffNAs.R",
+    "project_path" : "R/recalcCutoffNAs.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1499077919003.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "552097905",
+    "id" : "25B785B",
+    "lastKnownWriteTime" : 1499081166,
+    "last_content_update" : 1499081166471,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/fixStrophesPadding.R",
+    "project_path" : "R/fixStrophesPadding.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

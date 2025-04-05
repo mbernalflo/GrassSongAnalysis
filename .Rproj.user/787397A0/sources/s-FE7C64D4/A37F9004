@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1497594989080.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "209655175",
+    "id" : "A37F9004",
+    "lastKnownWriteTime" : 1506529899,
+    "last_content_update" : 1506529899,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/identifyStrophes.R",
+    "project_path" : "R/identifyStrophes.R",
+    "properties" : {
+        "cursorPosition" : "37,18",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

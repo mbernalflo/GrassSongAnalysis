@@ -1,0 +1,36 @@
+#' envFine_song
+#'
+#' This dataset contains the amplitude envelope of the song. It was obtained using seewave::env(). 
+#'
+#' @format A numeric vector of length 46877
+#'
+#' @usage data(envFine_song)
+#' @examples
+#' data(envFine_song)
+#' head(envFine_song)
+#'
+"envFine_song"
+
+#' stroCutoffs_1
+#'
+#' This dataset contains a dataframe of the cutoffs, as calculated using GrassSongAnalysis::identifyStrophes() on "song_raw.wav".
+#'
+#' @format A data frame with 6 rows and 9 columns.
+#' 
+#' \describe{
+#'   \item{StroCounter}{Species name}
+#'   \item{StartSampWithPad}{Family of the bird}
+#'   \item{EndSampWithPad}{Preferred habitat of the species}
+#'   \item{StartSampWoutPad}{Preferred habitat of the species}
+#'   \item{EndSampWoutPad}{Preferred habitat of the species}
+#'   \item{StartSec}{Preferred habitat of the species}
+#'   \item{EndSec}{Preferred habitat of the species}
+#'   \item{DurSec}{Preferred habitat of the species}
+#'   \item{StroValid}{Preferred habitat of the species}
+#' }
+#' @usage data(stroCutoffs_1)
+#' @examples
+#' data(stroCutoffs_1)
+#' head(stroCutoffs_1)
+#'
+"stroCutoffs_1"

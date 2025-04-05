@@ -1,0 +1,186 @@
+
+setwd("C:/Users/Gärtner/Desktop/SongAnalysis/song_recordings")
+rm(list = ls())
+#### parameters ####
+wlFine=44; ovlpFine=50; # Useful choices for finest (temporal) resolution, approx. 1 ms windows
+wlSpec=441; ovlpSpec=50; wlFreq=441; ovlpFreq=75; minAmpFreq=0.3 # Apparently useful values
+
+stroAmpThresh=25 #25
+
+rollmeanStroWW=101; StroThreshExceedWW=301; StroThreshNeeded=21; MinStroDur=0.5; 
+rollmeanWW=c(601, 11); rollmeanWWdiff=c(31, 11); meanReduceFrac=c(0.4,0); mCleanIt=3; minSyllDur=0.02; minSyllDur=0.15
+
+maxsilence <- 2.21
+minSonglength <- 10
+
+#### define which wave file ####
+
+#main path where all the song recordings are
+main_path <- "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/SongAnalysisTests/Tests_Dorsatus"
+
+#partial path to the specific folder where the songs I want to analyse are
+folder_path <- "addDatatoExamples" 
+
+#full path to use for this iteration
+new_path <- paste0(file.path(main_path, folder_path), "/")
+
+#name of the wave file with the extension
+
+wav_files <- basename(list.files(path = new_path, pattern = "\\.wav$", full.names = TRUE))
+
+wav_name <- tools::file_path_sans_ext(wav_files)
+#file to the table with the first strocutoffs and then with the song cutoffs
+tablepath <- file.path(new_path, paste0(wav_name, ".txt"))
+#folder where the cut songs should go
+songs_folder <- file.path(file.path(main_path, folder_path), wav_name, "/")
+
+syllpath <- file.path(file.path(file.path(main_path, folder_path), wav_name),"syllables", "/")
+
+print("load song")
+#### load wave file ####
+song <- loadSongfile(
+  wav_files,
+  new_path,
+  f = NULL,
+  highpassfilter = 3000,
+  select = NULL,
+  silenceAdd = NULL
+)
+
+saveRDS(song, file  = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/song.rds")
+
+print("create first envelope")
+#### create envelope ####
+envFine <- seewave::env(
+  song, 
+  envt = "hil",
+  msmooth=c(wlFine,ovlpFine),
+  plot=FALSE,
+  xaxt="n",
+  alab="",
+  tlab=""
+)
+str(envFine)
+envFine_song <- envFine
+save(envFine_song, file  = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/envFine_song.RData")
+
+
+print("identify strophes first time")
+#### identify strophes ####
+stroCutoffs <- identifyStrophes(
+  envFine,
+  wav_files,
+  stropath = new_path,
+  wl=wlFine, 
+  ovlp=ovlpFine,
+  padding = FALSE,
+  rollmeanStroWW=rollmeanStroWW,
+  stroAmpThresh=10, #stroAmpThresh
+  StroThreshExceedWW=StroThreshExceedWW,
+  StroThreshNeeded=StroThreshNeeded, 
+  MinStroDur=0.6,
+  plot=TRUE,
+  bmpwidth = 1000,
+  bmpheight = 450,
+  useResFile = FALSE,
+  overwriteRes = TRUE
+)
+
+stroCutoffs_1 <- stroCutoffs
+
+save(stroCutoffs_1, file  = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/stroCutoffs_1.RData")
+
+#songCutoffs <- read.table(tablepath, header = TRUE, sep = "\t")
+print("merge phrases")
+#### merge phrases into song ####
+songCutoffs <- mergePhrases(
+  tablepath, 
+  maxsilence=2.1, 
+  minSonglength, 
+  envFine = envFine,
+  overwriteRes=TRUE
+)
+
+
+save(songCutoffs, file  = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/songCutoffs.RData")
+
+print("cut songs")
+#### cut songs out of the big file ####
+song_segments <- cutSongs(
+  tablepath,
+  song,
+  songs_folder,
+  overwriteRes=FALSE
+)
+
+saveRDS(song_segments[[1]], file = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/song_segment.rds")
+
+envFine_1 <- seewave::env(
+  song_segments[[1]], 
+  envt = "hil",
+  msmooth=c(wlFine,ovlpFine),
+  plot=FALSE,
+  xaxt="n",
+  alab="",
+  tlab=""
+)
+
+
+save(envFine_1, file  = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/envFine_1.RData")
+
+stroCutoffs_2 <- identifyStrophes(
+  envFine_1,
+  wav_files,
+  stropath = songs_folder,
+  wl=wlFine, 
+  ovlp=ovlpFine,
+  padding = FALSE,
+  rollmeanStroWW=rollmeanStroWW,
+  stroAmpThresh=15, #stroAmpThresh
+  StroThreshExceedWW=StroThreshExceedWW,
+  StroThreshNeeded=StroThreshNeeded, 
+  MinStroDur=0.6,
+  plot=TRUE,
+  bmpwidth = 1000,
+  bmpheight = 450,
+  useResFile = TRUE,
+  overwriteRes = FALSE
+)
+
+stroCutoffs_2
+
+stroCutoffs_2 <- stroCutoffs_1
+save(stroCutoffs_2, file  = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/stroCutoffs_2.RData")
+
+syllCutoffs_list <- NULL
+
+syllCutoffs_list <- identifyNoiseSilence(
+  envFine_1, 
+  wav_files, 
+  syllpath=syllpath, 
+  identify=TRUE, #TRUE
+  plot=TRUE, #TRUE
+  f=44100,
+  toFile=TRUE,
+  bmpwidth=3200,
+  bmpheight=1200,
+  rollmeanWW=601,
+  rollmeanWWdiff=101,
+  max_gap=10,
+  wl=44,
+  ovlp=50,
+  meanReduceFrac=0.3, #0.4
+  minSyllDur=0.06, #0.06
+  maxSyllDur=1,
+  stroCutoffs=stroCutoffs_1,
+  mar=NULL,
+  cex=2,
+  lwdSyllSep=2,
+  writeRes=TRUE, 
+  overwriteRes=FALSE,
+  useResFile=TRUE
+)
+
+saveRDS(syllCutoffs_list, file = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/SyllablesList.rds")
+
+save(envFine, stroCutoffs, songCutoffs, envFine_1, stroCutoffs_1, file  = "C:/Users/Gärtner/Desktop/SongAnalysis/HolgerSongPackage/GrassSongAnalysis/data/datasets.RData")

@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1498752393774.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "73963418",
+    "id" : "B9B60EC4",
+    "lastKnownWriteTime" : 1497087174,
+    "last_content_update" : 1497087174,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/recalcCutoffNAs.R",
+    "project_path" : "R/recalcCutoffNAs.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

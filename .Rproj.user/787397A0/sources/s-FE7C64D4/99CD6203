@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1498579681713.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3800781066",
+    "id" : "99CD6203",
+    "lastKnownWriteTime" : 1506530149,
+    "last_content_update" : 1506530149924,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/identifySyllables.R",
+    "project_path" : "R/identifySyllables.R",
+    "properties" : {
+        "cursorPosition" : "3,7",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

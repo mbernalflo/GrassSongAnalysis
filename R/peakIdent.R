@@ -1,0 +1,37 @@
+#' @title Identification of local maxima and minima.
+#' 
+#' @description Identifies local maxima and minima .
+#'
+#' @param x The vector to be analyzed.
+#' @param tol Tolerance.
+#' @param partial boolean.
+#' @param decreasing boolean.
+#' 
+#' @return 
+#' Returns a vector.
+#' 
+#' @references 
+#' By jamie.f.olson on stackoverflow 
+#' (http://stackoverflow.com/questions/6836409/finding-local-maxima-and-minima)
+#'  
+#' @author jamie.f.olson, modified by Holger Schielzeth 
+#' (holger.schielzeth@@uni-bielefeld.de).
+#' 
+#' @export
+#' 
+
+peakIdent <- function(x, tol=1e-6, partial=TRUE, decreasing=FALSE){
+  if (decreasing){
+    if (partial){
+      which(diff(c(FALSE,diff(x)>tol,TRUE))>0)
+    }else {
+      which(diff(diff(x)>tol)>0)+1
+    }
+  }else {
+    if (partial){
+      which(diff(c(TRUE,diff(x)>=tol,FALSE))<0)
+    }else {
+      which(diff(diff(x)>=tol)<0)+1
+    }
+  }
+}

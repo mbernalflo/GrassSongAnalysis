@@ -1,0 +1,11 @@
+"0","song <- loadSongfile("
+"0"," system.file(""extdata"", ""song1.wav"", package = ""GrassSongAnalysis""),"
+"0","#  path = ""yourpath"","
+"0"," f = NULL,"
+"0"," highpassfilter=3000, #change this to reflect your needs (units are Hz)"
+"0"," select = NULL,"
+"0"," silenceAdd = NULL"
+"0",")"
+"2","Error in loadSongfile(system.file(""extdata"", ""song1.wav"", package = ""GrassSongAnalysis""),  : 
+  File  does not exist.
+"

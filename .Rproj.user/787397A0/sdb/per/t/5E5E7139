@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' Song file loading and basic preparation.\n#' \n#' Opens wav file, also applies highpassfiltering and subsetting if required. \n#' Returns the \\code{\\link{Wave}} object.\n#'\n#' @param wavfile Name of wavfile (required).\n#' @param path Path (optional, working directory if missing).\n#' @param f Sampling rate (extracted from wavfile if NULL).\n#' @param highpassfilter Frequency cutoff for high-pass filter (not applied if \n#'   NULL).\n#' @param select Vector of 2 for selecting a specific time window (in seconds).\n#' @param silenceAdd The number of samples that are added as silence at the \n#'   beginning and end of a file ('padding'). Sample units (not seconds!). No \n#'   silence is appended if silenceAdd=NULL.\n#' \n#' @return \n#' Returns a the song as a \\code{\\link{Wave}} object.\n#' \n#' @author Holger Schielzeth(holger.schielzeth@@uni-bielefeld.de).\n#' \n#' @seealso \n#' \\code{\\link{curateStrophes}}, \\code{\\link{identifyStrophes}}, \n#' \\code{\\link{identifySyllables}}, \\code{\\link{measureSyllables}}, \n#' \\code{\\link{curateSyllables}}, \\code{\\link{loadSongfile}},\n#' \n#' @examples   \n#' \\dontrun{\n#' \n#' mysound = loadSongfile(\"myfile.wav\", \"C://mypath//\", highpassfilter=1001, select=c(0.5,2))\n#' }\n#' \n#' @export\n\nloadSongfile <- function(wavfile, path=\"\", f=NULL, highpassfilter=1001, select=NULL, silenceAdd=NULL) {\n \tif(file.exists(paste0(path, wavfile))) {\n\t  song = tuneR::readWave(paste0(path, wavfile))\n\t} else stop(paste0(\"File \", path, wavfile, \" does not exist.\"))\n\tif(is.null(f)) f=song@samp.rate #/2\n\tif(!is.null(select) && length(select)!=2 && select[1]<0 && select[2]<length(song)/f) stop (\"select has to be within the limits of the duration of the .wav file.\")\n\tif(!is.null(select)) song = seewave::cutw(song, from=select[1], to=select[2], output=\"Wave\")\n\tif(!is.null(silenceAdd)) {\n\t  pastewave <- tuneR::silence(silenceAdd, xunit=\"samples\", samp.rate=f, bit=song@bit, pcm=TRUE)\n\t  song = seewave::pastew(pastewave, song, output = \"Wave\")\n\t  song = seewave::pastew(song, pastewave, output = \"Wave\")\n\t}\n\tif(!is.null(highpassfilter)) song = seewave::ffilter(song, from=highpassfilter, to=song@samp.rate/2, output=\"Wave\")\t\n  return(song)\n}",
+    "created" : 1497991073880.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2690211761",
+    "id" : "5E5E7139",
+    "lastKnownWriteTime" : 1435791034,
+    "last_content_update" : 1435791034,
+    "path" : "~/A_Projects/Gomphocerus/SongAnalysis/GrassSongAnalysis/R/loadSongfile.R",
+    "project_path" : "R/loadSongfile.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

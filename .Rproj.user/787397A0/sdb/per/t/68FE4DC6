@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' Extract measurements for syllables or pulses.\n#' \n#' Exacts the start, end, max, min and mean applitute for each syllable/puls.\n#' @param envFine A sound envelope as a vector of numbers.\n#' @param wavfile Name of wavfile (necessary).\n#' @param syllpath Path to folder in wich bmp files should be plotted \n#'   (optional, working directory if missing).\n#' @param syllCutoffs TO BE ADDED\n#' @param useResFile Boolean. A check is done, if a results file already exists and\n#'   the results of this file are used in \\code{useResFile = TRUE}\n#' \n#' @return \n#' Returns a \\code{data.frame}, which is \\code{Cutoffs} augmented with five \n#' columns of measurements.\n#' \n#' @references \n#' No references.\n#' \n#' @author Holger Schielzeth  (holger.schielzeth@@uni-bielefeld.de).\n#' \n#' @seealso \n#' \\code{\\link{loadSongfile}}, \\code{\\link{curateStrophes}}, \n#' \\code{\\link{identifyStrophes}}, \\code{\\link{identifySyllables}}, \n#' \\code{\\link{measureSyllables}}, \\code{\\link{curateSyllables}}\n#' \n#' @examples   \n#'\n#' \\dontrun{\n#' \n#' mysound = filePreparation(\"myfile.wav\", \"C://mypath//\", \n#    highpassfilter=1001, select=c(0.5,2))\n#' myenv = plotEnvolopes(mysound, \"myfile.wav\", \"c://mystropath//\",\n#'   padding = 300)\n#' mystro = plotStrophes(myenv$envFine, \"myfile.wav\", \"C://mypath//\", \n#'   measure=TRUE)\n#' }\n#' \n#' @export\n\nmeasureSyllables <- function(song, envFine, wavfile, syllpath, syllCutoffs=NULL, useResFile=TRUE) {\n                          # rollmeans should be odd numbers! Add check for this!\n  allsyllfiles  = dir(syllpath)\n  wavfilesig    = sub(pattern=\".wav\", replace=\"\", x=wavfile)\n  syllfiles     = grep(pattern=wavfilesig, x=allsyllfiles, ignore.case=TRUE, value=TRUE)\n  syllfiles     = grep(pattern=\"_Syllables.txt\", x=syllfiles, ignore.case=TRUE, value=TRUE)\n  if(length(syllfiles)>0) {\n    for (j in 1:length(syllfiles)){\n      print(paste0(\"Measure syllables: \", syllfiles[j]))\n      # rollmeans should be odd numbers! Add check for this!\n      resFile = paste0(syllpath, sub(\"s.txt\", \"\", syllfiles[j]),\"Data.csv\")\n      if(useResFile && file.exists(resFile)) {\n        syllMeas = NULL\n        print(\"Syllable measurements are already available. Set useResFile=FALSE if you want to recalculate them.\")\n      }\n      else {\n        syllCutoffs = read.table(paste0(syllpath, syllfiles[j]),header=TRUE)\n        syllMeas = measureAnything(song, envFine, syllCutoffs, type=\"Syll\")\n        write.table(syllMeas, resFile, sep=\",\", quote=FALSE, row.names=FALSE)  # Return values\n      }\n    }\n  }\n  return(syllMeas)\t\n}",
+    "created" : 1500914072853.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4246516766",
+    "id" : "68FE4DC6",
+    "lastKnownWriteTime" : 1506531569,
+    "last_content_update" : 1506531569938,
+    "path" : "~/A_Projects/Gomphocerus/SongAnalysis/GrassSongAnalysis/R/measureSyllables.R",
+    "project_path" : "R/measureSyllables.R",
+    "properties" : {
+    },
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,13 @@
+Package: GrassSongAnalysis
+Type: Package
+Title: Temporal Analysis of Grasshopper Songs
+Version: 0.0.1.9024
+Date: 2017-05-28
+Author: Holger Schielzeth
+Maintainer: Holger Schielzeth <holger.schielzeth@uni-jena.de>
+Description: Plots and analyzes grasshopper songs at three temporal resolutions. Automated identification of strophe, syllable and puls cutoff points and temporal measurements within each of those sections.
+License: GPL-3
+Imports: tuneR, seewave, zoo
+Suggests: knitr
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1

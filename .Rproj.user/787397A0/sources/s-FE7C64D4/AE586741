@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1498752465525.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3515863265",
+    "id" : "AE586741",
+    "lastKnownWriteTime" : 1499081538,
+    "last_content_update" : 1499081538220,
+    "path" : "~/A_Projects/sibirichus/SongAnalysis/GrassSongAnalysis/R/curateStrophes.R",
+    "project_path" : "R/curateStrophes.R",
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

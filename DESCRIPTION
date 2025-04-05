@@ -1,0 +1,18 @@
+Package: GrassSongAnalysis
+Type: Package
+Title: Temporal Analysis of Grasshopper Songs
+Version: 0.0.3.03
+Date: 2025-04-04
+Encoding: UTF-8
+Author: Mar Bernal Flo, Holger Schielzeth
+Maintainer: Mar Bernal Flo <mar.bernal.flo@uni-jena.de>, Holger Schielzeth <holger.schielzeth@uni-jena.de>
+Description: Plots and analyzes grasshopper songs at three temporal resolutions. Automated identification of strophe, syllable and puls cutoff points and temporal measurements within each of those sections.
+License: GPL-3
+Imports: tuneR, seewave, zoo, signal, pracma
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr, rmarkdown
+RoxygenNote: 7.3.2
+Config/testthat/edition: 3
